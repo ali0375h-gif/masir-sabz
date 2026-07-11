@@ -191,7 +191,10 @@ tr:last-child td{border-bottom:none;}
   background:var(--ink);color:var(--paper);font-size:13.5px;
 }
 .field textarea{resize:vertical;min-height:60px;}
-.field-row{display:flex;gap:10px;}
+.field-row{display:flex;gap:10px;flex-wrap:wrap;}
+.field-row .field{min-width:90px;}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-scroll table{min-width:560px;}
 .field-row .field{flex:1;}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
 .color-swatches{display:flex;gap:6px;}
@@ -332,9 +335,9 @@ tr:last-child td{border-bottom:none;}
         <p class="page-sub" style="margin-bottom:0;">برنامه ثابت هفتگی — قابل ویرایش در هر زمان.</p></div>
         <button class="btn primary" onclick="openSchoolModal()">+ افزودن کلاس</button>
       </div>
-      <div class="card"><table><thead><tr>
+      <div class="card"><div class="table-scroll"><table><thead><tr>
         <th>روز</th><th>ساعت</th><th>درس</th><th>معلم</th><th>کلاس/اتاق</th><th></th>
-      </tr></thead><tbody id="school-tbody"></tbody></table>
+      </tr></thead><tbody id="school-tbody"></tbody></table></div>
       <div id="school-empty" class="empty-note" style="display:none;">هنوز کلاسی اضافه نکرده‌ای.</div>
       </div>
     </div>
@@ -357,9 +360,9 @@ tr:last-child td{border-bottom:none;}
         <p class="page-sub" style="margin-bottom:0;">تاریخ، بازه مطالعه، سرفصل و نمره.</p></div>
         <button class="btn primary" onclick="openExamModal()">+ افزودن امتحان</button>
       </div>
-      <div class="card"><table><thead><tr>
+      <div class="card"><div class="table-scroll"><table><thead><tr>
         <th>درس</th><th>تاریخ</th><th>بازه مطالعه</th><th>سرفصل‌ها</th><th>نمره/درصد</th><th></th>
-      </tr></thead><tbody id="exams-tbody"></tbody></table>
+      </tr></thead><tbody id="exams-tbody"></tbody></table></div>
       <div id="exams-empty" class="empty-note" style="display:none;">امتحانی ثبت نشده.</div>
       </div>
     </div>
