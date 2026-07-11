@@ -152,8 +152,12 @@ tr:last-child td{border-bottom:none;}
 .actions-cell{display:flex;gap:6px;}
 
 /* ===== Weekly schedule ===== */
-.week-wrap{background:var(--navy);border:1px solid var(--line);border-radius:var(--radius);overflow:auto;}
-.week-grid{display:grid;grid-template-columns:56px repeat(7,1fr);min-width:900px;position:relative;}
+.week-wrap{background:var(--navy);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;touch-action:pan-y;}
+.week-scale-wrap{transform-origin:top right;width:900px;}
+.week-grid{display:grid;grid-template-columns:56px repeat(7,1fr);width:900px;position:relative;}
+.zoom-controls{display:flex;gap:4px;border:1px solid var(--line);border-radius:8px;padding:2px;}
+.zoom-controls .btn{border:none;background:transparent;padding:6px 12px;}
+.zoom-controls .btn:hover{background:rgba(239,246,234,0.08);}
 .week-head{padding:10px 4px;text-align:center;font-weight:800;font-size:13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:var(--navy-2);position:sticky;top:0;z-index:5;}
 .week-head.corner{background:var(--navy-2);}
 .time-col{border-right:1px solid var(--line);}
@@ -308,10 +312,17 @@ tr:last-child td{border-bottom:none;}
           <h1 class="page-title" style="margin-bottom:0;">برنامه هفتگی</h1>
           <p class="page-sub" style="margin-bottom:0;">کلاس مدرسه، کلاس آنلاین و برنامه شخصی — همه اینجا. جعبه‌ها را می‌توانید بکشید و جابه‌جا کنید.</p>
         </div>
-        <button class="btn primary" onclick="openPersonalModal()">+ افزودن به برنامه</button>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div class="zoom-controls">
+            <button class="btn small" onclick="weekZoomOut()" title="کوچک‌نمایی">−</button>
+            <button class="btn small" onclick="weekZoomFit()" title="نمای کلی هفته">نمای کلی</button>
+            <button class="btn small" onclick="weekZoomIn()" title="بزرگ‌نمایی">+</button>
+          </div>
+          <button class="btn primary" onclick="openPersonalModal()">+ افزودن به برنامه</button>
+        </div>
       </div>
-      <div class="week-wrap"><div id="week-grid" class="week-grid"></div></div>
-      <p class="footnote">تداخل زمانی دو برنامه با حاشیه قرمز نشان داده می‌شود و جعبه‌ها کنار هم قرار می‌گیرند.</p>
+      <div class="week-wrap" id="week-wrap"><div class="week-scale-wrap" id="week-scale-wrap"><div id="week-grid" class="week-grid"></div></div></div>
+      <p class="footnote">تداخل زمانی دو برنامه با حاشیه قرمز نشان داده می‌شود و جعبه‌ها کنار هم قرار می‌گیرند. روی موبایل با دکمه‌های + و − یا با پینچ روی صفحه هم می‌تونی زوم کنی.</p>
     </div>
 
     <!-- SCHOOL -->
@@ -498,7 +509,7 @@ function jalCal(jy){
   if(jy<jp||jy>=breaks[bl-1]) throw new Error('year out of range');
   for(i=1;i<bl;i+=1){jm=breaks[i];jump=jm-jp;if(jy<jm)break;leapJ+=div(jump,33)*8+div(mod(jump,33),4);jp=jm;}
   n=jy-jp;
-  leapJ+=div(n,33)*8+div(mod(n+3,33),4);
+  leapJ+=div(n,33)*8+div(mod(n,33)+3,4);
   if(mod(jump,33)===4 && jump-n===4) leapJ+=1;
   var leapG=div(gy,4)-div((div(gy,100)+1)*3,4)-150;
   var march=20+leapJ-leapG;
@@ -747,7 +758,42 @@ function renderWeekly(){
 
   grid.innerHTML = html;
   attachDragHandlers();
+  fitWeekGrid();
 }
+
+/* ---- Weekly grid zoom/fit ---- */
+var weekUserZoom = 1;
+var weekFitScale = 1;
+function fitWeekGrid(){
+  var wrap = document.getElementById('week-wrap');
+  var scaleWrap = document.getElementById('week-scale-wrap');
+  var grid = document.getElementById('week-grid');
+  if(!wrap || !scaleWrap || !grid) return;
+  var naturalWidth = 900;
+  var naturalHeight = grid.scrollHeight || grid.offsetHeight;
+  var availableWidth = wrap.clientWidth || naturalWidth;
+  weekFitScale = Math.min(1, availableWidth / naturalWidth);
+  applyWeekZoom(naturalHeight);
+}
+function applyWeekZoom(naturalHeight){
+  var wrap = document.getElementById('week-wrap');
+  var scaleWrap = document.getElementById('week-scale-wrap');
+  var grid = document.getElementById('week-grid');
+  if(!wrap || !scaleWrap || !grid) return;
+  if(naturalHeight===undefined) naturalHeight = grid.scrollHeight || grid.offsetHeight;
+  var scale = weekFitScale * weekUserZoom;
+  scaleWrap.style.transform = 'scale('+scale+')';
+  wrap.style.height = Math.max(200, naturalHeight*scale)+'px';
+  wrap.style.overflow = scale > weekFitScale ? 'auto' : 'hidden';
+}
+function weekZoomIn(){ weekUserZoom = Math.min(2.2, weekUserZoom*1.2); applyWeekZoom(); }
+function weekZoomOut(){ weekUserZoom = Math.max(0.5, weekUserZoom/1.2); applyWeekZoom(); }
+function weekZoomFit(){ weekUserZoom = 1; fitWeekGrid(); }
+var _weekResizeTimer=null;
+window.addEventListener('resize', function(){
+  clearTimeout(_weekResizeTimer);
+  _weekResizeTimer = setTimeout(function(){ weekUserZoom=1; fitWeekGrid(); }, 200);
+});
 function onEventClick(evt, source, id){
   evt.stopPropagation();
   if(source==='school'){ openSchoolModal(id); }
