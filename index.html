@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسیر سبز</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0C1D12">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مسیر سبز">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C1D12;
+  --navy:#14301F;
+  --navy-2:#1C4429;
+  --paper:#EFF6EA;
+  --paper-dim:#A8C2A0;
+  --gold:#7CB342;
+  --teal:#2E9E6B;
+  --red:#C1443C;
+  --purple:#6FA8C6;
+  --green:#8BC34A;
+  --line: rgba(239,246,234,0.14);
+  --radius: 10px;
+  --mono: 'Vazirmatn', monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--ink);
+  color:var(--paper);
+  font-family:'Vazirmatn',sans-serif;
+  min-height:100vh;
+}
+::selection{background:var(--gold);color:var(--ink);}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+/* ===== Layout ===== */
+.app{display:flex;min-height:100vh;}
+.sidebar{
+  width:230px;flex:none;
+  background:var(--navy);
+  border-left:1px solid var(--line);
+  padding:22px 14px;
+  display:flex;flex-direction:column;gap:6px;
+  position:sticky;top:0;height:100vh;
+}
+.brand{
+  font-weight:900;font-size:19px;letter-spacing:-0.02em;
+  padding:0 8px 18px 8px;border-bottom:1px solid var(--line);margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.brand .seal{
+  width:30px;height:30px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--gold), #3d5a1f);
+  flex:none;
+  box-shadow:0 0 0 3px rgba(201,162,39,0.15);
+}
+.brand-logo{width:32px;height:32px;object-fit:contain;flex:none;border-radius:6px;background:#fff;padding:2px;}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 12px;border-radius:8px;border:none;
+  background:transparent;color:var(--paper-dim);
+  font-size:14.5px;font-weight:600;text-align:right;
+  transition:background .15s, color .15s;
+}
+.nav-btn:hover{background:rgba(237,239,245,0.06);color:var(--paper);}
+.nav-btn.active{background:var(--gold);color:var(--ink);}
+.nav-btn .ic{width:18px;text-align:center;font-size:15px;}
+.main{flex:1;padding:28px 34px;max-width:100%;overflow-x:hidden;}
+.page{display:none;animation:fadeIn .25s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+h1.page-title{font-size:24px;font-weight:800;margin:0 0 4px 0;}
+.page-sub{color:var(--paper-dim);font-size:13.5px;margin:0 0 22px 0;}
+
+.card{
+  background:var(--navy);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px;
+}
+.grid{display:grid;gap:16px;}
+.grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.grid.cols-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:1000px){.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}}
+
+/* ===== Dashboard ===== */
+.ticket{
+  background:linear-gradient(135deg, var(--navy-2), var(--navy));
+  border:1px solid var(--line);border-radius:14px;
+  padding:22px 26px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.ticket::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(201,162,39,0.35) 1.5px, transparent 1.5px);
+  background-size:14px 14px;opacity:.25;pointer-events:none;
+}
+.ticket .stub-label{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:4px;}
+.ticket .count{font-size:56px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;color:var(--paper);}
+.ticket .count span{font-size:16px;font-weight:600;color:var(--paper-dim);margin-right:8px;}
+.ticket .date-line{margin-top:8px;font-size:13px;color:var(--paper-dim);}
+.ticket .seal-big{
+  width:96px;height:96px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 35% 30%, var(--gold), #3d5a1f);
+  display:flex;align-items:center;justify-content:center;
+  border:3px dashed rgba(237,239,245,0.35);
+  font-size:11px;font-weight:800;color:var(--ink);text-align:center;padding:8px;
+  transform:rotate(-8deg);
+}
+.mini-label{font-size:12px;color:var(--paper-dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.list-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;
+}
+.list-item:last-child{border-bottom:none;}
+.tag{
+  font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;
+}
+.tag.school{background:rgba(46,158,143,.18);color:var(--teal);}
+.tag.mock{background:rgba(201,162,39,.18);color:var(--gold);}
+.tag.online{background:rgba(124,111,203,.18);color:var(--purple);}
+.tag.personal{background:rgba(62,156,90,.18);color:var(--green);}
+.empty-note{color:var(--paper-dim);font-size:13px;padding:14px 0;text-align:center;}
+.progress-row{margin-bottom:10px;}
+.progress-row .plabel{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;color:var(--paper-dim);}
+.pbar{height:7px;border-radius:5px;background:rgba(237,239,245,0.08);overflow:hidden;}
+.pbar > div{height:100%;background:var(--teal);border-radius:5px;}
+
+/* ===== Buttons ===== */
+.btn{
+  border:1px solid var(--line);background:var(--navy-2);color:var(--paper);
+  padding:9px 16px;border-radius:8px;font-size:13.5px;font-weight:600;
+}
+.btn:hover{border-color:var(--gold);}
+.btn.primary{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:800;}
+.btn.primary:hover{filter:brightness(1.08);}
+.btn.danger{color:var(--red);border-color:rgba(193,68,60,.4);}
+.btn.small{padding:5px 10px;font-size:12px;}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+
+/* ===== Tables/lists ===== */
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:right;color:var(--paper-dim);font-weight:700;font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);}
+td{padding:10px;border-bottom:1px solid var(--line);}
+tr:last-child td{border-bottom:none;}
+.actions-cell{display:flex;gap:6px;}
+
+/* ===== Weekly schedule ===== */
+.week-wrap{background:var(--navy);border:1px solid var(--line);border-radius:var(--radius);overflow:auto;}
+.week-grid{display:grid;grid-template-columns:56px repeat(7,1fr);min-width:900px;position:relative;}
+.week-head{padding:10px 4px;text-align:center;font-weight:800;font-size:13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:var(--navy-2);position:sticky;top:0;z-index:5;}
+.week-head.corner{background:var(--navy-2);}
+.time-col{border-right:1px solid var(--line);}
+.time-cell{height:60px;font-size:10.5px;color:var(--paper-dim);text-align:center;padding-top:2px;border-bottom:1px solid var(--line);}
+.day-col{position:relative;border-right:1px solid var(--line);}
+.hour-line{height:60px;border-bottom:1px solid var(--line);}
+.hour-line:nth-child(odd){background:rgba(237,239,245,0.015);}
+.event-box{
+  position:absolute;right:2px;left:2px;border-radius:6px;
+  padding:4px 6px;font-size:11px;overflow:hidden;cursor:grab;
+  border:1px solid rgba(0,0,0,.25);line-height:1.3;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+.event-box:active{cursor:grabbing;}
+.event-box b{display:block;font-size:11.5px;font-weight:800;}
+.event-box .t{opacity:.85;font-size:10px;}
+.event-box.school{background:rgba(46,158,143,.85);}
+.event-box.online{background:rgba(124,111,203,.85);}
+.event-box.personal{background:rgba(62,156,90,.85);}
+.event-box.conflict{outline:2px solid var(--red);}
+
+/* ===== Modal ===== */
+.overlay{position:fixed;inset:0;background:rgba(10,14,26,.65);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.overlay.show{display:flex;}
+.modal{background:var(--navy);border:1px solid var(--line);border-radius:14px;padding:22px;width:100%;max-width:440px;max-height:88vh;overflow:auto;}
+.modal h3{margin:0 0 16px 0;font-size:17px;font-weight:800;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:12.5px;color:var(--paper-dim);margin-bottom:5px;font-weight:600;}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 10px;border-radius:7px;border:1px solid var(--line);
+  background:var(--ink);color:var(--paper);font-size:13.5px;
+}
+.field textarea{resize:vertical;min-height:60px;}
+.field-row{display:flex;gap:10px;}
+.field-row .field{flex:1;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+.color-swatches{display:flex;gap:6px;}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;}
+.swatch.sel{border-color:var(--paper);}
+
+.subject-block{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+.subject-block h4{margin:0 0 8px;font-size:14px;font-weight:800;color:var(--gold);}
+.subject-block .sub-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line);}
+.subject-block .sub-row:last-child{border-bottom:none;}
+
+.footnote{font-size:11.5px;color:var(--paper-dim);margin-top:6px;}
+.badge-num{font-variant-numeric:tabular-nums;}
+
+/* ===== Pomodoro ===== */
+.pomo-wrap{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;}
+.pomo-clock-card{
+  background:linear-gradient(160deg, var(--navy-2), var(--navy));
+  border:1px solid var(--line);border-radius:16px;
+  padding:26px;flex:1;min-width:300px;max-width:380px;text-align:center;
+}
+.pomo-mode{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.pomo-ring-wrap{position:relative;width:220px;height:220px;margin:0 auto 18px auto;}
+.pomo-ring-wrap svg{transform:rotate(-90deg);}
+.pomo-ring-bg{fill:none;stroke:rgba(237,239,245,0.08);stroke-width:10;}
+.pomo-ring-fg{fill:none;stroke:var(--gold);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.pomo-time{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:42px;font-weight:900;font-variant-numeric:tabular-nums;
+}
+.pomo-subject-label{font-size:14px;color:var(--paper-dim);margin-bottom:16px;min-height:18px;}
+.pomo-controls{display:flex;gap:8px;justify-content:center;}
+.pomo-cycles{margin-top:14px;font-size:12.5px;color:var(--paper-dim);}
+.pomo-dots{display:flex;gap:6px;justify-content:center;margin-top:6px;}
+.pomo-dot{width:9px;height:9px;border-radius:50%;background:rgba(237,239,245,.15);}
+.pomo-dot.done{background:var(--gold);}
+.pomo-side{flex:1;min-width:280px;display:flex;flex-direction:column;gap:16px;}
+.mini-play-btn{
+  position:absolute;left:3px;top:2px;width:16px;height:16px;border-radius:50%;
+  background:rgba(16,24,43,.55);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;
+  border:none;line-height:1;z-index:2;
+}
+.mini-play-btn:hover{background:var(--gold);color:var(--ink);}
+
+@media(max-width:800px){
+  .app{flex-direction:column;}
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;overflow-x:auto;padding:10px;}
+  .brand{display:none;}
+  .nav-btn{white-space:nowrap;}
+  .main{padding:18px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="brand"><img src="logo.png" alt="مسیر سبز" class="brand-logo">مسیر سبز</div>
+    <button class="nav-btn active" data-page="dashboard"><span class="ic">▣</span> داشبورد</button>
+    <button class="nav-btn" data-page="weekly"><span class="ic">▦</span> برنامه هفتگی</button>
+    <button class="nav-btn" data-page="school"><span class="ic">🏫</span> برنامه کلاسی مدرسه</button>
+    <button class="nav-btn" data-page="online"><span class="ic">💻</span> کلاس‌های آنلاین</button>
+    <button class="nav-btn" data-page="exams"><span class="ic">📝</span> امتحانات مدرسه</button>
+    <button class="nav-btn" data-page="mocks"><span class="ic">📊</span> آزمون‌های آزمایشی</button>
+    <button class="nav-btn" data-page="resources"><span class="ic">📚</span> منابع و اساتید</button>
+    <button class="nav-btn" data-page="pomodoro"><span class="ic">⏱</span> تایمر</button>
+    <button class="nav-btn" data-page="contact"><span class="ic">✉</span> ارتباط با ما</button>
+    <button class="nav-btn" data-page="settings"><span class="ic">⚙</span> تنظیمات</button>
+    <button id="install-btn" class="btn primary" style="display:none;margin-top:10px;" onclick="triggerInstall()">⬇ نصب اپلیکیشن</button>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <h1 class="page-title">داشبورد</h1>
+      <p class="page-sub" id="today-line"></p>
+
+      <div class="ticket" style="margin-bottom:18px;">
+        <div>
+          <div class="stub-label">روزشمار کنکور</div>
+          <div class="count" id="konkur-count">--<span>روز مانده</span></div>
+          <div class="date-line" id="konkur-date-line"></div>
+        </div>
+        <div class="seal-big">کارت<br>ورود به<br>جلسه</div>
+      </div>
+
+      <div class="grid cols-3">
+        <div class="card">
+          <div class="mini-label">برنامه امروز</div>
+          <div id="dash-today-list"></div>
+        </div>
+        <div class="card">
+          <div class="mini-label">امتحانات نزدیک</div>
+          <div id="dash-exams-list"></div>
+        </div>
+        <div class="card">
+          <div class="mini-label">آخرین آزمون آزمایشی</div>
+          <div id="dash-mock-list"></div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="card">
+          <div class="mini-label">پیشرفت منابع درسی</div>
+          <div id="dash-resources"></div>
+        </div>
+        <div class="card">
+          <div class="mini-label">وضعیت کلاس‌های آنلاین</div>
+          <div id="dash-online"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEKLY -->
+    <div class="page" id="page-weekly">
+      <div class="toolbar">
+        <div>
+          <h1 class="page-title" style="margin-bottom:0;">برنامه هفتگی</h1>
+          <p class="page-sub" style="margin-bottom:0;">کلاس مدرسه، کلاس آنلاین و برنامه شخصی — همه اینجا. جعبه‌ها را می‌توانید بکشید و جابه‌جا کنید.</p>
+        </div>
+        <button class="btn primary" onclick="openPersonalModal()">+ افزودن به برنامه</button>
+      </div>
+      <div class="week-wrap"><div id="week-grid" class="week-grid"></div></div>
+      <p class="footnote">تداخل زمانی دو برنامه با حاشیه قرمز نشان داده می‌شود و جعبه‌ها کنار هم قرار می‌گیرند.</p>
+    </div>
+
+    <!-- SCHOOL -->
+    <div class="page" id="page-school">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">برنامه کلاسی مدرسه</h1>
+        <p class="page-sub" style="margin-bottom:0;">برنامه ثابت هفتگی — قابل ویرایش در هر زمان.</p></div>
+        <button class="btn primary" onclick="openSchoolModal()">+ افزودن کلاس</button>
+      </div>
+      <div class="card"><table><thead><tr>
+        <th>روز</th><th>ساعت</th><th>درس</th><th>معلم</th><th>کلاس/اتاق</th><th></th>
+      </tr></thead><tbody id="school-tbody"></tbody></table>
+      <div id="school-empty" class="empty-note" style="display:none;">هنوز کلاسی اضافه نکرده‌ای.</div>
+      </div>
+    </div>
+
+    <!-- ONLINE -->
+    <div class="page" id="page-online">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">کلاس‌های آنلاین</h1>
+        <p class="page-sub" style="margin-bottom:0;">پیگیری تعداد جلسات، حضور، استاد و لینک ورود.</p></div>
+        <button class="btn primary" onclick="openOnlineModal()">+ افزودن کلاس آنلاین</button>
+      </div>
+      <div id="online-list"></div>
+      <div id="online-empty" class="empty-note" style="display:none;">هنوز کلاس آنلاینی ثبت نشده.</div>
+    </div>
+
+    <!-- EXAMS -->
+    <div class="page" id="page-exams">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">امتحانات مدرسه</h1>
+        <p class="page-sub" style="margin-bottom:0;">تاریخ، بازه مطالعه، سرفصل و نمره.</p></div>
+        <button class="btn primary" onclick="openExamModal()">+ افزودن امتحان</button>
+      </div>
+      <div class="card"><table><thead><tr>
+        <th>درس</th><th>تاریخ</th><th>بازه مطالعه</th><th>سرفصل‌ها</th><th>نمره/درصد</th><th></th>
+      </tr></thead><tbody id="exams-tbody"></tbody></table>
+      <div id="exams-empty" class="empty-note" style="display:none;">امتحانی ثبت نشده.</div>
+      </div>
+    </div>
+
+    <!-- MOCKS -->
+    <div class="page" id="page-mocks">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">آزمون‌های آزمایشی</h1>
+        <p class="page-sub" style="margin-bottom:0;">تراز کل، رتبه استان و کشور، درصد هر درس.</p></div>
+        <button class="btn primary" onclick="openMockModal()">+ افزودن آزمون</button>
+      </div>
+      <div id="mocks-list"></div>
+      <div id="mocks-empty" class="empty-note" style="display:none;">آزمونی ثبت نشده.</div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="page" id="page-resources">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">منابع و اساتید</h1>
+        <p class="page-sub" style="margin-bottom:0;">برای هر درس چند منبع/استاد با پیشرفت مطالعه.</p></div>
+        <button class="btn primary" onclick="openResourceModal()">+ افزودن منبع</button>
+      </div>
+      <div id="resources-list"></div>
+      <div id="resources-empty" class="empty-note" style="display:none;">منبعی ثبت نشده.</div>
+    </div>
+
+    <!-- POMODORO -->
+    <div class="page" id="page-pomodoro">
+      <div class="toolbar">
+        <div><h1 class="page-title" style="margin-bottom:0;">تایمر</h1>
+        <p class="page-sub" style="margin-bottom:0;">پومودورو یا تایمر ساده — جدا برای هر درس.</p></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn primary" id="mode-btn-pomo" onclick="switchTimerMode('pomo')">پومودورو</button>
+          <button class="btn" id="mode-btn-simple" onclick="switchTimerMode('simple')">تایمر ساده</button>
+          <button class="btn" onclick="openPomoSettingsModal()">⚙ تنظیم زمان‌بندی</button>
+        </div>
+      </div>
+
+      <div class="pomo-wrap">
+        <div class="pomo-clock-card">
+          <div class="pomo-mode" id="pomo-mode-label">آماده شروع</div>
+          <div class="pomo-ring-wrap">
+            <svg width="220" height="220" viewBox="0 0 220 220">
+              <circle class="pomo-ring-bg" cx="110" cy="110" r="100"></circle>
+              <circle class="pomo-ring-fg" id="pomo-ring" cx="110" cy="110" r="100"></circle>
+            </svg>
+            <div class="pomo-time" id="pomo-time">۲۵:۰۰</div>
+          </div>
+          <div class="field" style="text-align:right;">
+            <label>درس</label>
+            <select id="pomo-subject-select" onchange="onPomoSubjectChange()"></select>
+          </div>
+          <div class="pomo-subject-label" id="pomo-current-subject"></div>
+          <div class="field" id="simple-minutes-field" style="display:none;text-align:right;">
+            <label>مدت زمان (دقیقه)</label>
+            <input type="number" id="simple-minutes-input" value="30" min="1" onchange="simpleSetMinutes()">
+          </div>
+          <div class="pomo-controls">
+            <button class="btn primary" id="pomo-start-btn" onclick="timerToggleStart()">شروع</button>
+            <button class="btn" id="pomo-skip-btn" onclick="pomoSkip()">رد کردن مرحله</button>
+            <button class="btn danger" onclick="timerReset()">ریست</button>
+          </div>
+          <div class="pomo-cycles" id="pomo-cycles-wrap">
+            دور <span id="pomo-cycle-num">۱</span> از <span id="pomo-cycle-total">۴</span>
+            <div class="pomo-dots" id="pomo-dots"></div>
+          </div>
+        </div>
+
+        <div class="pomo-side">
+          <div class="card">
+            <div class="mini-label">امروز</div>
+            <div id="pomo-today-stats"></div>
+          </div>
+          <div class="card">
+            <div class="mini-label">پومودوروهای انجام‌شده به تفکیک درس</div>
+            <div id="pomo-subject-stats"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="page" id="page-contact">
+      <h1 class="page-title">ارتباط با ما</h1>
+      <p class="page-sub">مسیر سبز — همراه شما تا مسیر قبولی.</p>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="mini-label">کانال تلگرام</div>
+          <p class="footnote" style="margin-bottom:12px;font-size:13px;">جدیدترین آموزش‌ها، اخبار و به‌روزرسانی‌ها رو اینجا دنبال کن.</p>
+          <a class="btn primary" style="display:inline-block;text-decoration:none;" href="https://t.me/akademi_masir_sabz" target="_blank">عضویت در کانال تلگرام ↗</a>
+        </div>
+        <div class="card">
+          <div class="mini-label">پشتیبانی</div>
+          <p class="footnote" style="margin-bottom:12px;font-size:13px;">سوال یا مشکلی داشتی، مستقیم پیام بده.</p>
+          <a class="btn" style="display:inline-block;text-decoration:none;" href="https://t.me/Masir_sabz_Support" target="_blank">پیام به پشتیبانی (@Masir_sabz_Support) ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <h1 class="page-title">تنظیمات</h1>
+      <p class="page-sub">تاریخ کنکور، پشتیبان‌گیری و بازیابی اطلاعات.</p>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="mini-label">تاریخ کنکور (شمسی)</div>
+          <div class="field-row">
+            <div class="field"><label>سال</label><input type="number" id="konkur-y" min="1400" max="1420"></div>
+            <div class="field"><label>ماه</label><input type="number" id="konkur-m" min="1" max="12"></div>
+            <div class="field"><label>روز</label><input type="number" id="konkur-d" min="1" max="31"></div>
+          </div>
+          <button class="btn primary" onclick="saveKonkurDate()">ذخیره تاریخ کنکور</button>
+        </div>
+        <div class="card">
+          <div class="mini-label">پشتیبان‌گیری و بازیابی</div>
+          <p class="footnote" style="margin-bottom:12px;">همه اطلاعات فقط داخل همین مرورگر ذخیره می‌شود. برای اطمینان، یک فایل پشتیبان بگیر.</p>
+          <button class="btn" onclick="exportBackup()">⬇ دانلود فایل پشتیبان</button>
+          <div style="margin-top:10px;">
+            <label class="btn" style="display:inline-block;">
+              ⬆ بازیابی از فایل
+              <input type="file" id="import-file" accept="application/json" style="display:none;" onchange="importBackup(event)">
+            </label>
+          </div>
+          <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+            <button class="btn danger" onclick="clearAllData()">حذف کامل همه اطلاعات</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+/* ============================================================
+   JALALI CALENDAR CONVERSION (pure JS, no dependency)
+   ============================================================ */
+function div(a,b){return ~~(a/b);}
+function jalCal(jy){
+  var breaks=[-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+  var bl=breaks.length, gy=jy+621, leapJ=-14, jp=breaks[0], jm,jump,leap,n,i;
+  if(jy<jp||jy>=breaks[bl-1]) throw new Error('year out of range');
+  for(i=1;i<bl;i+=1){jm=breaks[i];jump=jm-jp;if(jy<jm)break;leapJ+=div(jump,33)*8+div(mod(jump,33),4);jp=jm;}
+  n=jy-jp;
+  leapJ+=div(n,33)*8+div(mod(n+3,33),4);
+  if(mod(jump,33)===4 && jump-n===4) leapJ+=1;
+  var leapG=div(gy,4)-div((div(gy,100)+1)*3,4)-150;
+  var march=20+leapJ-leapG;
+  if(jump-n<6) n=n-jump+div(jump,33)*33;
+  leap=mod(mod(n+1,33)-1,4);
+  if(leap===-1)leap=4;
+  return {leap:leap,gy:gy,march:march};
+}
+function mod(a,b){return a-~~(a/b)*b;}
+function isLeapJalaliYear(jy){return jalCal(jy).leap===0;}
+function gIsLeap(gy){return (gy%4===0 && gy%100!==0)||gy%400===0;}
+function g2d(gy,gm,gd){
+  var d = div((gy+div(gm-8,6)+100100)*1461,4)+div(153*mod(gm+9,12)+2,5)+gd-34840408;
+  d = d - div(div(gy+100100+div(gm-8,6),100)*3,4)+752;
+  return d;
+}
+function d2g(jdn){
+  var j,i,gd,gm,gy;
+  j = 4*jdn+139361631;
+  j = j + div(div(4*jdn+183187720,146097)*3,4)*4-3908;
+  i = div(mod(j,1461),4)*5+308;
+  gd = div(mod(i,153),5)+1;
+  gm = mod(div(i,153),12)+1;
+  gy = div(j,1461)-100100+div(8-gm,6);
+  return {gy:gy,gm:gm,gd:gd};
+}
+function j2d(jy,jm,jd){
+  var r=jalCal(jy);
+  return g2d(r.gy,3,r.march)+(jm-1)*31-div(jm,7)*(jm-7)+jd-1;
+}
+function d2j(jdn){
+  var gy = d2g(jdn).gy, jy=gy-621, r, jdn1f, k, jm, jd;
+  r=jalCal(jy);
+  jdn1f=g2d(gy,3,r.march);
+  k=jdn-jdn1f;
+  if(k>=0){
+    if(k<=185){jm=1+div(k,31);jd=mod(k,31)+1;return {jy:jy,jm:jm,jd:jd};}
+    else{k-=186;}
+  } else {
+    jy-=1;k+=179;
+    if(r.leap===1)k+=1;
+  }
+  jm=7+div(k,30);
+  jd=mod(k,30)+1;
+  return {jy:jy,jm:jm,jd:jd};
+}
+function toJalaali(gy,gm,gd){return d2j(g2d(gy,gm,gd));}
+function toGregorian(jy,jm,jd){var g=d2g(j2d(jy,jm,jd));return {gy:g.gy,gm:g.gm,gd:g.gd};}
+
+var jWeekdays=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+var jMonths=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+var weekDaysOrder=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
+
+function todayJalali(){
+  var now=new Date();
+  var j=toJalaali(now.getFullYear(),now.getMonth()+1,now.getDate());
+  return j;
+}
+function jalaliWeekdayName(jy,jm,jd){
+  var g=toGregorian(jy,jm,jd);
+  var dt=new Date(g.gy,g.gm-1,g.gd);
+  return jWeekdays[dt.getDay()];
+}
+function faDigits(str){
+  var map={'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
+  return String(str).replace(/[0-9]/g,function(d){return map[d];});
+}
+function fmtJalali(jy,jm,jd){return faDigits(jy)+'/'+faDigits(String(jm).padStart(2,'0'))+'/'+faDigits(String(jd).padStart(2,'0'));}
+function jalaliToDayCount(jy,jm,jd){return j2d(jy,jm,jd);}
+
+/* ============================================================
+   DATA LAYER (localStorage)
+   ============================================================ */
+var DB_KEY='study_planner_db_v1';
+var db = loadDB();
+function defaultDB(){
+  return {
+    school:[],      // {id,day,start,end,subject,teacher,room}
+    online:[],      // {id,day,start,end,subject,teacher,link,total,attended}
+    personal:[],    // {id,day,start,end,title,color}
+    exams:[],        // {id, subject, jy,jm,jd, studyRange, topics, score, percent}
+    mocks:[],        // {id, jy,jm,jd, name, tarazKol, rankProvince, rankCountry, subjects:[{name,percent}] }
+    resources:[],     // {id, subject, name, teacher, link, progress}
+    pomodoro:{ work:25, short:5, long:15, cyclesBeforeLong:4, log:[] }, // log: [{id, subject, jy,jm,jd, minutes}]
+    settings:{ konkur:{jy:1405,jm:4,jd:19} } // default: Tir 19 - typical konkur month, editable
+  };
+}
+function loadDB(){
+  try{
+    var raw=localStorage.getItem(DB_KEY);
+    if(!raw) return defaultDB();
+    var parsed=JSON.parse(raw);
+    var def=defaultDB();
+    for(var k in def){ if(!(k in parsed)) parsed[k]=def[k]; }
+    return parsed;
+  }catch(e){ return defaultDB(); }
+}
+function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+function uid(){ return 'id'+Date.now()+Math.floor(Math.random()*10000); }
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+document.querySelectorAll('.nav-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-'+btn.dataset.page).classList.add('active');
+    renderAll();
+  });
+});
+
+function closeModal(){document.getElementById('overlay').classList.remove('show');document.getElementById('modal-content').innerHTML='';}
+function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('overlay').classList.add('show');}
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ============================================================
+   RENDER: DASHBOARD
+   ============================================================ */
+function renderDashboard(){
+  var t=todayJalali();
+  document.getElementById('today-line').textContent = 'امروز '+jalaliWeekdayName(t.jy,t.jm,t.jd)+'، '+fmtJalali(t.jy,t.jm,t.jd)+' — '+jMonths[t.jm-1];
+
+  var k=db.settings.konkur;
+  var daysLeft = jalaliToDayCount(k.jy,k.jm,k.jd) - jalaliToDayCount(t.jy,t.jm,t.jd);
+  document.getElementById('konkur-count').innerHTML = faDigits(Math.max(daysLeft,0))+'<span>روز مانده</span>';
+  document.getElementById('konkur-date-line').textContent = 'تاریخ کنکور: '+fmtJalali(k.jy,k.jm,k.jd);
+
+  // Today's schedule
+  var todayName = jalaliWeekdayName(t.jy,t.jm,t.jd);
+  var todays = getAllEvents().filter(e=>e.day===todayName).sort((a,b)=>a.start.localeCompare(b.start));
+  var el=document.getElementById('dash-today-list');
+  if(todays.length===0){ el.innerHTML='<div class="empty-note">امروز برنامه‌ای ثبت نشده.</div>'; }
+  else{
+    el.innerHTML = todays.map(e=>{
+      return '<div class="list-item"><span>'+e.title+'</span><span class="tag '+e.type+'">'+e.start+' - '+e.end+'</span></div>';
+    }).join('');
+  }
+
+  // Upcoming exams (school)
+  var todayCount = jalaliToDayCount(t.jy,t.jm,t.jd);
+  var upcoming = db.exams.map(x=>Object.assign({},x,{dc:jalaliToDayCount(x.jy,x.jm,x.jd)}))
+    .filter(x=>x.dc>=todayCount).sort((a,b)=>a.dc-b.dc).slice(0,6);
+  var el2=document.getElementById('dash-exams-list');
+  if(upcoming.length===0){ el2.innerHTML='<div class="empty-note">امتحان نزدیکی ثبت نشده.</div>'; }
+  else{
+    el2.innerHTML = upcoming.map(x=>{
+      var d = x.dc-todayCount;
+      return '<div class="list-item"><span>'+x.subject+'<br><span style="color:var(--paper-dim);font-size:11.5px;">'+fmtJalali(x.jy,x.jm,x.jd)+'</span></span><span class="tag school">'+(d===0?'امروز':faDigits(d)+' روز دیگر')+'</span></div>';
+    }).join('');
+  }
+
+  // Latest mock
+  var el3=document.getElementById('dash-mock-list');
+  if(db.mocks.length===0){ el3.innerHTML='<div class="empty-note">آزمونی ثبت نشده.</div>'; }
+  else{
+    var sorted = db.mocks.slice().sort((a,b)=>jalaliToDayCount(b.jy,b.jm,b.jd)-jalaliToDayCount(a.jy,a.jm,a.jd));
+    var m=sorted[0];
+    el3.innerHTML = '<div class="list-item"><span>'+(m.name||'آزمون')+'<br><span style="color:var(--paper-dim);font-size:11.5px;">'+fmtJalali(m.jy,m.jm,m.jd)+'</span></span><span class="tag mock">تراز '+faDigits(m.tarazKol||'-')+'</span></div>'+
+      '<div class="list-item"><span>رتبه استان</span><span>'+faDigits(m.rankProvince||'-')+'</span></div>'+
+      '<div class="list-item"><span>رتبه کشور</span><span>'+faDigits(m.rankCountry||'-')+'</span></div>';
+  }
+
+  // Resources progress
+  var el4=document.getElementById('dash-resources');
+  if(db.resources.length===0){ el4.innerHTML='<div class="empty-note">منبعی ثبت نشده.</div>'; }
+  else{
+    var bySubject={};
+    db.resources.forEach(r=>{ (bySubject[r.subject]=bySubject[r.subject]||[]).push(r); });
+    el4.innerHTML = Object.keys(bySubject).map(subj=>{
+      var arr=bySubject[subj];
+      var avg = Math.round(arr.reduce((s,r)=>s+(Number(r.progress)||0),0)/arr.length);
+      return '<div class="progress-row"><div class="plabel"><span>'+subj+'</span><span>'+faDigits(avg)+'٪</span></div><div class="pbar"><div style="width:'+avg+'%"></div></div></div>';
+    }).join('');
+  }
+
+  // Online classes status
+  var el5=document.getElementById('dash-online');
+  if(db.online.length===0){ el5.innerHTML='<div class="empty-note">کلاس آنلاینی ثبت نشده.</div>'; }
+  else{
+    el5.innerHTML = db.online.map(o=>{
+      var pct = o.total>0? Math.round((o.attended/o.total)*100):0;
+      return '<div class="progress-row"><div class="plabel"><span>'+o.subject+'</span><span>'+faDigits(o.attended)+'/'+faDigits(o.total)+'</span></div><div class="pbar"><div style="width:'+pct+'%;background:var(--purple);"></div></div></div>';
+    }).join('');
+  }
+}
+
+/* ============================================================
+   EVENTS AGGREGATOR (for weekly grid + dashboard)
+   ============================================================ */
+function getAllEvents(){
+  var out=[];
+  db.school.forEach(c=>out.push({id:c.id,source:'school',type:'school',day:c.day,start:c.start,end:c.end,title:c.subject+(c.teacher?(' — '+c.teacher):''),}));
+  db.online.forEach(c=>out.push({id:c.id,source:'online',type:'online',day:c.day,start:c.start,end:c.end,title:c.subject+' (آنلاین)'}));
+  db.personal.forEach(c=>out.push({id:c.id,source:'personal',type:'personal',day:c.day,start:c.start,end:c.end,title:c.title,color:c.color}));
+  return out;
+}
+
+/* ============================================================
+   RENDER: WEEKLY GRID
+   ============================================================ */
+var GRID_START_HOUR=6, GRID_END_HOUR=23;
+function timeToMinutes(t){ var p=t.split(':'); return (+p[0])*60+(+p[1]); }
+function renderWeekly(){
+  var grid=document.getElementById('week-grid');
+  var totalHours = GRID_END_HOUR-GRID_START_HOUR;
+  var html = '<div class="week-head corner"></div>';
+  weekDaysOrder.forEach(d=>{ html += '<div class="week-head">'+d+'</div>'; });
+
+  html += '<div class="time-col">';
+  for(var h=GRID_START_HOUR; h<GRID_END_HOUR; h++){
+    html += '<div class="time-cell">'+faDigits(String(h).padStart(2,'0'))+':۰۰</div>';
+  }
+  html += '</div>';
+
+  var events = getAllEvents();
+  weekDaysOrder.forEach(day=>{
+    html += '<div class="day-col" data-day="'+day+'" style="height:'+(totalHours*60)+'px;">';
+    for(var h=GRID_START_HOUR; h<GRID_END_HOUR; h++){ html += '<div class="hour-line"></div>'; }
+    // events for this day
+    var dayEvents = events.filter(e=>e.day===day);
+    // detect overlaps -> assign columns
+    dayEvents.sort((a,b)=>timeToMinutes(a.start)-timeToMinutes(b.start));
+    var placed=[];
+    dayEvents.forEach(ev=>{
+      var s=timeToMinutes(ev.start), e2=timeToMinutes(ev.end);
+      var overlapGroup = placed.filter(p=> s < p.e2 && e2 > p.s );
+      var col = 0;
+      var usedCols = overlapGroup.map(p=>p.col);
+      while(usedCols.includes(col)) col++;
+      placed.push({s:s,e2:e2,col:col});
+      var totalCols = Math.max(1, overlapGroup.length+1);
+      var top = (s - GRID_START_HOUR*60);
+      var height = Math.max(20, e2-s);
+      var widthPct = 100/ (col+2>totalCols? totalCols : (totalCols));
+      var leftPct = col*widthPct;
+      var conflictClass = overlapGroup.length>0? ' conflict':'';
+      var bg = ev.type==='personal' && ev.color ? ('background:'+ev.color+';') : '';
+      html += '<div class="event-box '+ev.type+conflictClass+'" draggable="true" data-id="'+ev.id+'" data-source="'+ev.source+'" data-day="'+day+'" data-start="'+ev.start+'" data-end="'+ev.end+'" style="top:'+top+'px;height:'+height+'px;'+bg+'" onclick="onEventClick(event,\''+ev.source+'\',\''+ev.id+'\')">'+
+        '<button class="mini-play-btn" title="شروع پومودورو برای این درس" onclick="event.stopPropagation();startPomodoroForSubject(\''+ev.title.replace(/'/g,"\\'")+'\')">▶</button>'+
+        '<b>'+ev.title+'</b><span class="t">'+ev.start+' - '+ev.end+'</span></div>';
+    });
+    html += '</div>';
+  });
+
+  grid.innerHTML = html;
+  attachDragHandlers();
+}
+function onEventClick(evt, source, id){
+  evt.stopPropagation();
+  if(source==='school'){ openSchoolModal(id); }
+  else if(source==='online'){ openOnlineModal(id); }
+  else if(source==='personal'){ openPersonalModal(id); }
+}
+
+/* Drag to move events on weekly grid */
+var dragState=null;
+function attachDragHandlers(){
+  document.querySelectorAll('.event-box').forEach(box=>{
+    box.addEventListener('dragstart', function(e){
+      dragState = { id: box.dataset.id, source: box.dataset.source, day: box.dataset.day, start: box.dataset.start, end: box.dataset.end };
+      e.dataTransfer.setData('text/plain', box.dataset.id);
+    });
+  });
+  document.querySelectorAll('.day-col').forEach(col=>{
+    col.addEventListener('dragover', function(e){ e.preventDefault(); });
+    col.addEventListener('drop', function(e){
+      e.preventDefault();
+      if(!dragState) return;
+      var rect = col.getBoundingClientRect();
+      var y = e.clientY - rect.top;
+      var minutesFromStart = Math.round(y/15)*15; // snap to 15 min
+      var newStartMin = GRID_START_HOUR*60 + minutesFromStart;
+      var durMin = timeToMinutes(dragState.end) - timeToMinutes(dragState.start);
+      var newEndMin = newStartMin + durMin;
+      newStartMin = Math.max(GRID_START_HOUR*60, Math.min(newStartMin, GRID_END_HOUR*60-durMin));
+      newEndMin = newStartMin+durMin;
+      var newDay = col.dataset.day;
+      var newStart = minutesToTime(newStartMin), newEnd = minutesToTime(newEndMin);
+      moveEvent(dragState.source, dragState.id, newDay, newStart, newEnd);
+      dragState=null;
+    });
+  });
+}
+function minutesToTime(m){ var h=Math.floor(m/60), mm=m%60; return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0'); }
+function moveEvent(source,id,day,start,end){
+  var arr = source==='school'?db.school: source==='online'?db.online: db.personal;
+  var item = arr.find(x=>x.id===id);
+  if(!item) return;
+  item.day=day; item.start=start; item.end=end;
+  saveDB(); renderAll();
+}
+
+/* ============================================================
+   MODALS: SCHOOL CLASS
+   ============================================================ */
+function openSchoolModal(id){
+  var item = id? db.school.find(x=>x.id===id) : null;
+  var html = '<h3>'+(item?'ویرایش کلاس':'افزودن کلاس مدرسه')+'</h3>'+
+    '<div class="field"><label>درس</label><input id="f-subject" value="'+(item?item.subject:'')+'"></div>'+
+    '<div class="field"><label>معلم</label><input id="f-teacher" value="'+(item?item.teacher||'':'')+'"></div>'+
+    '<div class="field"><label>کلاس/اتاق</label><input id="f-room" value="'+(item?item.room||'':'')+'"></div>'+
+    '<div class="field"><label>روز</label><select id="f-day">'+weekDaysOrder.map(d=>'<option '+(item&&item.day===d?'selected':'')+'>'+d+'</option>').join('')+'</select></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>ساعت شروع</label><input type="time" id="f-start" value="'+(item?item.start:'08:00')+'"></div>'+
+      '<div class="field"><label>ساعت پایان</label><input type="time" id="f-end" value="'+(item?item.end:'09:00')+'"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deleteSchool(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="saveSchool('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function saveSchool(id){
+  var obj={
+    subject:val('f-subject'), teacher:val('f-teacher'), room:val('f-room'),
+    day:val('f-day'), start:val('f-start'), end:val('f-end')
+  };
+  if(!obj.subject){alert('نام درس را وارد کن.');return;}
+  if(id){ Object.assign(db.school.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.school.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteSchool(id){ db.school=db.school.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+
+/* ============================================================
+   MODALS: ONLINE CLASS
+   ============================================================ */
+function openOnlineModal(id){
+  var item = id? db.online.find(x=>x.id===id) : null;
+  var html = '<h3>'+(item?'ویرایش کلاس آنلاین':'افزودن کلاس آنلاین')+'</h3>'+
+    '<div class="field"><label>درس</label><input id="f-subject" value="'+(item?item.subject:'')+'"></div>'+
+    '<div class="field"><label>استاد</label><input id="f-teacher" value="'+(item?item.teacher||'':'')+'"></div>'+
+    '<div class="field"><label>لینک ورود به کلاس</label><input id="f-link" value="'+(item?item.link||'':'')+'"></div>'+
+    '<div class="field"><label>روز برگزاری</label><select id="f-day">'+weekDaysOrder.map(d=>'<option '+(item&&item.day===d?'selected':'')+'>'+d+'</option>').join('')+'</select></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>ساعت شروع</label><input type="time" id="f-start" value="'+(item?item.start:'17:00')+'"></div>'+
+      '<div class="field"><label>ساعت پایان</label><input type="time" id="f-end" value="'+(item?item.end:'18:00')+'"></div>'+
+    '</div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>تعداد کل جلسات دوره</label><input type="number" id="f-total" value="'+(item?item.total:20)+'"></div>'+
+      '<div class="field"><label>جلسات رفته‌شده</label><input type="number" id="f-attended" value="'+(item?item.attended:0)+'"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deleteOnline(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="saveOnline('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function saveOnline(id){
+  var obj={
+    subject:val('f-subject'), teacher:val('f-teacher'), link:val('f-link'),
+    day:val('f-day'), start:val('f-start'), end:val('f-end'),
+    total:Number(val('f-total'))||0, attended:Number(val('f-attended'))||0
+  };
+  if(!obj.subject){alert('نام درس را وارد کن.');return;}
+  if(id){ Object.assign(db.online.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.online.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteOnline(id){ db.online=db.online.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+function markAttended(id){
+  var item=db.online.find(x=>x.id===id);
+  if(item && item.attended<item.total){ item.attended++; saveDB(); renderAll(); }
+}
+
+/* ============================================================
+   MODALS: PERSONAL EVENT
+   ============================================================ */
+var personalColors=['#8BC34A','#2E9E6B','#558B2F','#6FA8C6','#C1443C','#33691E'];
+function openPersonalModal(id){
+  var item = id? db.personal.find(x=>x.id===id) : null;
+  var chosen = item? item.color : personalColors[0];
+  var html = '<h3>'+(item?'ویرایش برنامه شخصی':'افزودن برنامه شخصی')+'</h3>'+
+    '<div class="field"><label>عنوان</label><input id="f-title" value="'+(item?item.title:'')+'"></div>'+
+    '<div class="field"><label>روز</label><select id="f-day">'+weekDaysOrder.map(d=>'<option '+(item&&item.day===d?'selected':'')+'>'+d+'</option>').join('')+'</select></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>ساعت شروع</label><input type="time" id="f-start" value="'+(item?item.start:'20:00')+'"></div>'+
+      '<div class="field"><label>ساعت پایان</label><input type="time" id="f-end" value="'+(item?item.end:'21:00')+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>رنگ</label><div class="color-swatches" id="color-swatches">'+
+      personalColors.map(c=>'<div class="swatch'+(c===chosen?' sel':'')+'" style="background:'+c+'" data-c="'+c+'" onclick="pickColor(this)"></div>').join('')+
+    '</div></div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deletePersonal(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="savePersonal('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+  window._selectedColor = chosen;
+}
+function pickColor(el){
+  document.querySelectorAll('#color-swatches .swatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  window._selectedColor = el.dataset.c;
+}
+function savePersonal(id){
+  var obj={ title:val('f-title'), day:val('f-day'), start:val('f-start'), end:val('f-end'), color:window._selectedColor||personalColors[0] };
+  if(!obj.title){alert('عنوان را وارد کن.');return;}
+  if(id){ Object.assign(db.personal.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.personal.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deletePersonal(id){ db.personal=db.personal.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+
+/* ============================================================
+   MODALS: EXAM (school)
+   ============================================================ */
+function openExamModal(id){
+  var item = id? db.exams.find(x=>x.id===id) : null;
+  var t = todayJalali();
+  var html = '<h3>'+(item?'ویرایش امتحان':'افزودن امتحان مدرسه')+'</h3>'+
+    '<div class="field"><label>درس</label><input id="f-subject" value="'+(item?item.subject:'')+'"></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>سال</label><input type="number" id="f-jy" value="'+(item?item.jy:t.jy)+'"></div>'+
+      '<div class="field"><label>ماه</label><input type="number" id="f-jm" value="'+(item?item.jm:t.jm)+'" min="1" max="12"></div>'+
+      '<div class="field"><label>روز</label><input type="number" id="f-jd" value="'+(item?item.jd:t.jd)+'" min="1" max="31"></div>'+
+    '</div>'+
+    '<div class="field"><label>بازه مطالعه</label><input id="f-range" placeholder="مثلاً از فصل ۱ تا ۳" value="'+(item?item.studyRange||'':'')+'"></div>'+
+    '<div class="field"><label>سرفصل‌ها</label><textarea id="f-topics">'+(item?item.topics||'':'')+'</textarea></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>نمره (از ۲۰)</label><input id="f-score" value="'+(item?item.score||'':'')+'"></div>'+
+      '<div class="field"><label>درصد</label><input id="f-percent" value="'+(item?item.percent||'':'')+'"></div>'+
+    '</div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deleteExam(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="saveExam('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function saveExam(id){
+  var obj={ subject:val('f-subject'), jy:Number(val('f-jy')), jm:Number(val('f-jm')), jd:Number(val('f-jd')),
+    studyRange:val('f-range'), topics:val('f-topics'), score:val('f-score'), percent:val('f-percent') };
+  if(!obj.subject){alert('نام درس را وارد کن.');return;}
+  if(id){ Object.assign(db.exams.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.exams.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteExam(id){ db.exams=db.exams.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+
+/* ============================================================
+   MODALS: MOCK EXAM
+   ============================================================ */
+function openMockModal(id){
+  var item = id? db.mocks.find(x=>x.id===id) : null;
+  var t = todayJalali();
+  var subjects = item? item.subjects: [{name:'',percent:''}];
+  var html = '<h3>'+(item?'ویرایش آزمون':'افزودن آزمون آزمایشی')+'</h3>'+
+    '<div class="field"><label>نام آزمون</label><input id="f-name" value="'+(item?item.name||'':'')+'" placeholder="مثلاً قلم‌چی مرحله ۳"></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>سال</label><input type="number" id="f-jy" value="'+(item?item.jy:t.jy)+'"></div>'+
+      '<div class="field"><label>ماه</label><input type="number" id="f-jm" value="'+(item?item.jm:t.jm)+'"></div>'+
+      '<div class="field"><label>روز</label><input type="number" id="f-jd" value="'+(item?item.jd:t.jd)+'"></div>'+
+    '</div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>تراز کل</label><input id="f-taraz" value="'+(item?item.tarazKol||'':'')+'"></div>'+
+      '<div class="field"><label>رتبه استان</label><input id="f-rp" value="'+(item?item.rankProvince||'':'')+'"></div>'+
+      '<div class="field"><label>رتبه کشور</label><input id="f-rc" value="'+(item?item.rankCountry||'':'')+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>درصد هر درس</label><div id="subjects-wrap">'+
+      subjects.map((s,i)=>subjectRow(s,i)).join('')+
+    '</div>'+
+    '<button class="btn small" type="button" onclick="addSubjectRow()">+ افزودن درس</button></div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deleteMock(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="saveMock('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function subjectRow(s,i){
+  return '<div class="field-row" style="margin-bottom:6px;">'+
+    '<input class="mock-subj-name" placeholder="نام درس" value="'+(s.name||'')+'" style="flex:2;padding:7px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper);">'+
+    '<input class="mock-subj-pct" placeholder="درصد" value="'+(s.percent||'')+'" style="flex:1;padding:7px;border-radius:6px;border:1px solid var(--line);background:var(--ink);color:var(--paper);">'+
+  '</div>';
+}
+function addSubjectRow(){
+  document.getElementById('subjects-wrap').insertAdjacentHTML('beforeend', subjectRow({},0));
+}
+function saveMock(id){
+  var names=document.querySelectorAll('.mock-subj-name'), pcts=document.querySelectorAll('.mock-subj-pct');
+  var subjects=[];
+  names.forEach((n,i)=>{ if(n.value) subjects.push({name:n.value, percent:pcts[i].value}); });
+  var obj={ name:val('f-name'), jy:Number(val('f-jy')), jm:Number(val('f-jm')), jd:Number(val('f-jd')),
+    tarazKol:val('f-taraz'), rankProvince:val('f-rp'), rankCountry:val('f-rc'), subjects:subjects };
+  if(id){ Object.assign(db.mocks.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.mocks.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteMock(id){ db.mocks=db.mocks.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+
+/* ============================================================
+   MODALS: RESOURCE
+   ============================================================ */
+function openResourceModal(id){
+  var item = id? db.resources.find(x=>x.id===id) : null;
+  var html = '<h3>'+(item?'ویرایش منبع':'افزودن منبع/استاد')+'</h3>'+
+    '<div class="field"><label>درس</label><input id="f-subject" value="'+(item?item.subject:'')+'"></div>'+
+    '<div class="field"><label>نام منبع/کتاب/جزوه</label><input id="f-name" value="'+(item?item.name||'':'')+'"></div>'+
+    '<div class="field"><label>استاد</label><input id="f-teacher" value="'+(item?item.teacher||'':'')+'"></div>'+
+    '<div class="field"><label>لینک/فایل</label><input id="f-link" value="'+(item?item.link||'':'')+'"></div>'+
+    '<div class="field"><label>درصد پیشرفت مطالعه</label><input type="number" id="f-progress" min="0" max="100" value="'+(item?item.progress:0)+'"></div>'+
+    '<div class="modal-actions">'+
+      (item?'<button class="btn danger" onclick="deleteResource(\''+id+'\')">حذف</button>':'')+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="saveResource('+(item?"'"+id+"'":'null')+')">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function saveResource(id){
+  var obj={ subject:val('f-subject'), name:val('f-name'), teacher:val('f-teacher'), link:val('f-link'), progress:Number(val('f-progress'))||0 };
+  if(!obj.subject){alert('نام درس را وارد کن.');return;}
+  if(id){ Object.assign(db.resources.find(x=>x.id===id), obj); }
+  else { obj.id=uid(); db.resources.push(obj); }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteResource(id){ db.resources=db.resources.filter(x=>x.id!==id); saveDB(); closeModal(); renderAll(); }
+
+/* ============================================================
+   RENDER: LIST PAGES
+   ============================================================ */
+function val(id){ return document.getElementById(id).value; }
+
+function renderSchoolTable(){
+  var tbody=document.getElementById('school-tbody');
+  var sorted = db.school.slice().sort((a,b)=> weekDaysOrder.indexOf(a.day)-weekDaysOrder.indexOf(b.day) || a.start.localeCompare(b.start));
+  tbody.innerHTML = sorted.map(c=>
+    '<tr><td>'+c.day+'</td><td>'+c.start+' - '+c.end+'</td><td>'+c.subject+'</td><td>'+(c.teacher||'-')+'</td><td>'+(c.room||'-')+'</td>'+
+    '<td class="actions-cell"><button class="btn small" onclick="openSchoolModal(\''+c.id+'\')">ویرایش</button></td></tr>'
+  ).join('');
+  document.getElementById('school-empty').style.display = sorted.length? 'none':'block';
+}
+
+function renderOnlineList(){
+  var wrap=document.getElementById('online-list');
+  if(db.online.length===0){ wrap.innerHTML=''; document.getElementById('online-empty').style.display='block'; return; }
+  document.getElementById('online-empty').style.display='none';
+  wrap.innerHTML = '<div class="grid cols-2">'+db.online.map(o=>{
+    var pct = o.total>0? Math.round((o.attended/o.total)*100):0;
+    return '<div class="card">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'+
+        '<div><b style="font-size:15px;">'+o.subject+'</b><br><span class="footnote">'+ (o.teacher||'بدون استاد ثبت‌شده') +' • '+o.day+' '+o.start+'-'+o.end+'</span></div>'+
+        '<span class="tag online">آنلاین</span>'+
+      '</div>'+
+      (o.link? '<p class="footnote" style="margin-top:8px;"><a href="'+o.link+'" target="_blank" style="color:var(--purple);">لینک ورود به کلاس ↗</a></p>':'')+
+      '<div class="progress-row" style="margin-top:10px;"><div class="plabel"><span>جلسات: '+faDigits(o.attended)+' از '+faDigits(o.total)+'</span><span>'+faDigits(pct)+'٪</span></div><div class="pbar"><div style="width:'+pct+'%;background:var(--purple);"></div></div></div>'+
+      '<div class="modal-actions" style="margin-top:10px;justify-content:flex-start;">'+
+        '<button class="btn small primary" onclick="markAttended(\''+o.id+'\')">ثبت حضور این جلسه</button>'+
+        '<button class="btn small" onclick="openOnlineModal(\''+o.id+'\')">ویرایش</button>'+
+      '</div>'+
+    '</div>';
+  }).join('')+'</div>';
+}
+
+function renderExamsTable(){
+  var tbody=document.getElementById('exams-tbody');
+  var sorted = db.exams.slice().sort((a,b)=>jalaliToDayCount(a.jy,a.jm,a.jd)-jalaliToDayCount(b.jy,b.jm,b.jd));
+  tbody.innerHTML = sorted.map(x=>
+    '<tr><td>'+x.subject+'</td><td>'+fmtJalali(x.jy,x.jm,x.jd)+'</td><td>'+(x.studyRange||'-')+'</td><td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(x.topics||'-')+'</td>'+
+    '<td>'+(x.score?('نمره '+faDigits(x.score)):'')+(x.score&&x.percent?' / ':'')+(x.percent?(faDigits(x.percent)+'٪'):(x.score?'':'-'))+'</td>'+
+    '<td class="actions-cell"><button class="btn small" onclick="openExamModal(\''+x.id+'\')">ویرایش</button></td></tr>'
+  ).join('');
+  document.getElementById('exams-empty').style.display = sorted.length? 'none':'block';
+}
+
+function renderMocksList(){
+  var wrap=document.getElementById('mocks-list');
+  if(db.mocks.length===0){ wrap.innerHTML=''; document.getElementById('mocks-empty').style.display='block'; return; }
+  document.getElementById('mocks-empty').style.display='none';
+  var sorted = db.mocks.slice().sort((a,b)=>jalaliToDayCount(b.jy,b.jm,b.jd)-jalaliToDayCount(a.jy,a.jm,a.jd));
+  wrap.innerHTML = sorted.map(m=>{
+    return '<div class="card" style="margin-bottom:12px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'+
+        '<div><b style="font-size:15px;">'+(m.name||'آزمون')+'</b><br><span class="footnote">'+fmtJalali(m.jy,m.jm,m.jd)+'</span></div>'+
+        '<button class="btn small" onclick="openMockModal(\''+m.id+'\')">ویرایش</button>'+
+      '</div>'+
+      '<div class="grid cols-3" style="margin-top:10px;">'+
+        '<div><span class="mini-label" style="margin-bottom:2px;">تراز کل</span><div style="font-weight:800;font-size:16px;">'+faDigits(m.tarazKol||'-')+'</div></div>'+
+        '<div><span class="mini-label" style="margin-bottom:2px;">رتبه استان</span><div style="font-weight:800;font-size:16px;">'+faDigits(m.rankProvince||'-')+'</div></div>'+
+        '<div><span class="mini-label" style="margin-bottom:2px;">رتبه کشور</span><div style="font-weight:800;font-size:16px;">'+faDigits(m.rankCountry||'-')+'</div></div>'+
+      '</div>'+
+      (m.subjects&&m.subjects.length? '<div style="margin-top:12px;">'+m.subjects.map(s=>
+        '<div class="progress-row"><div class="plabel"><span>'+s.name+'</span><span>'+faDigits(s.percent)+'٪</span></div><div class="pbar"><div style="width:'+Math.max(0,Math.min(100,s.percent))+'%;background:var(--gold);"></div></div></div>'
+      ).join('')+'</div>' : '')+
+    '</div>';
+  }).join('');
+}
+
+function renderResourcesList(){
+  var wrap=document.getElementById('resources-list');
+  if(db.resources.length===0){ wrap.innerHTML=''; document.getElementById('resources-empty').style.display='block'; return; }
+  document.getElementById('resources-empty').style.display='none';
+  var bySubject={};
+  db.resources.forEach(r=>{ (bySubject[r.subject]=bySubject[r.subject]||[]).push(r); });
+  wrap.innerHTML = Object.keys(bySubject).map(subj=>{
+    return '<div class="subject-block"><h4>'+subj+'</h4>'+
+      bySubject[subj].map(r=>
+        '<div class="sub-row"><span>'+r.name+(r.teacher?(' — '+r.teacher):'')+(r.link?(' <a href="'+r.link+'" target="_blank" style="color:var(--teal);">لینک</a>'):'')+'</span>'+
+        '<span style="display:flex;align-items:center;gap:8px;"><span class="badge-num">'+faDigits(r.progress)+'٪</span>'+
+        '<button class="btn small" onclick="openResourceModal(\''+r.id+'\')">ویرایش</button></span></div>'
+      ).join('')+
+    '</div>';
+  }).join('');
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function renderSettings(){
+  document.getElementById('konkur-y').value = db.settings.konkur.jy;
+  document.getElementById('konkur-m').value = db.settings.konkur.jm;
+  document.getElementById('konkur-d').value = db.settings.konkur.jd;
+}
+function saveKonkurDate(){
+  db.settings.konkur = { jy:Number(val('konkur-y')), jm:Number(val('konkur-m')), jd:Number(val('konkur-d')) };
+  saveDB(); renderAll();
+  alert('تاریخ کنکور ذخیره شد.');
+}
+function exportBackup(){
+  var blob = new Blob([JSON.stringify(db, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var t=todayJalali();
+  a.href=url; a.download='backup-planner-'+fmtJalali(t.jy,t.jm,t.jd).replace(/[۰-۹]/g,d=>'0123456789'['۰۱۲۳۴۵۶۷۸۹'.indexOf(d)])+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importBackup(evt){
+  var file = evt.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var parsed = JSON.parse(e.target.result);
+      if(!confirm('این کار تمام اطلاعات فعلی را با فایل پشتیبان جایگزین می‌کند. ادامه می‌دهی؟')) return;
+      db = parsed;
+      var def=defaultDB();
+      for(var k in def){ if(!(k in db)) db[k]=def[k]; }
+      saveDB(); renderAll();
+      alert('اطلاعات با موفقیت بازیابی شد.');
+    }catch(err){ alert('فایل معتبر نیست.'); }
+  };
+  reader.readAsText(file);
+  evt.target.value='';
+}
+function clearAllData(){
+  if(!confirm('آیا مطمئنی؟ تمام اطلاعات برای همیشه حذف می‌شود.')) return;
+  if(!confirm('این عمل قابل بازگشت نیست. یک‌بار دیگر تایید کن.')) return;
+  db = defaultDB();
+  saveDB(); renderAll();
+}
+
+/* ============================================================
+   TIMER MODULE (Pomodoro + Simple)
+   ============================================================ */
+var timerMode = 'pomo'; // 'pomo' | 'simple'
+var pomo = {
+  running:false, phase:'work', // work | short | long
+  remaining:0, total:0, cycle:1, timerId:null, subject:'', audioCtx:null
+};
+var simpleTimer = { running:false, remaining:30*60, total:30*60, timerId:null, subject:'' };
+
+function switchTimerMode(mode){
+  timerMode = mode;
+  timerPause();
+  document.getElementById('mode-btn-pomo').className = 'btn'+(mode==='pomo'?' primary':'');
+  document.getElementById('mode-btn-simple').className = 'btn'+(mode==='simple'?' primary':'');
+  document.getElementById('simple-minutes-field').style.display = mode==='simple' ? 'block':'none';
+  document.getElementById('pomo-cycles-wrap').style.display = mode==='simple' ? 'none':'block';
+  document.getElementById('pomo-skip-btn').style.display = mode==='simple' ? 'none':'inline-block';
+  if(mode==='pomo'){ pomoSetPhase('work', true); pomoUpdateDisplay(); }
+  else { simpleSetMinutes(); simpleUpdateDisplay(); }
+}
+function timerToggleStart(){
+  if(timerMode==='pomo') pomoToggleStart(); else simpleToggleStart();
+}
+function timerPause(){
+  if(timerMode==='pomo') pomoPause(); else simplePause();
+}
+function timerReset(){
+  if(timerMode==='pomo') pomoReset(); else simpleReset();
+}
+function pomoDurations(){
+  var s = db.pomodoro;
+  return { work:s.work*60, short:s.short*60, long:s.long*60, cyclesBeforeLong:s.cyclesBeforeLong };
+}
+function getAllSubjects(){
+  var set = {};
+  db.school.forEach(c=>{ if(c.subject) set[c.subject]=true; });
+  db.online.forEach(c=>{ if(c.subject) set[c.subject]=true; });
+  db.resources.forEach(r=>{ if(r.subject) set[r.subject]=true; });
+  return Object.keys(set);
+}
+function pomoPopulateSubjects(preserve){
+  var sel = document.getElementById('pomo-subject-select');
+  if(!sel) return;
+  var subjects = getAllSubjects();
+  var curSubject = timerMode==='pomo' ? pomo.subject : simpleTimer.subject;
+  var cur = preserve!==undefined? preserve : (curSubject || sel.value);
+  var opts = subjects.map(s=>'<option value="'+s+'">'+s+'</option>').join('');
+  opts += '<option value="__custom__">+ درس دیگر (تایپ کن)</option>';
+  sel.innerHTML = opts;
+  if(cur && subjects.includes(cur)){ sel.value = cur; }
+  var chosen = sel.value==='__custom__' ? curSubject : sel.value;
+  pomo.subject = chosen; simpleTimer.subject = chosen;
+  document.getElementById('pomo-current-subject').textContent = chosen ? 'در حال تمرکز روی: '+chosen : '';
+}
+function onPomoSubjectChange(){
+  var sel = document.getElementById('pomo-subject-select');
+  if(sel.value==='__custom__'){
+    var name = prompt('نام درس را وارد کن:');
+    if(name){
+      var opt=document.createElement('option'); opt.value=name; opt.textContent=name;
+      sel.insertBefore(opt, sel.lastChild); sel.value=name;
+    } else { sel.selectedIndex=0; }
+  }
+  var chosen = sel.value==='__custom__' ? '' : sel.value;
+  pomo.subject = chosen; simpleTimer.subject = chosen;
+  document.getElementById('pomo-current-subject').textContent = chosen ? 'در حال تمرکز روی: '+chosen : '';
+}
+function startPomodoroForSubject(subject){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.nav-btn[data-page="pomodoro"]').classList.add('active');
+  document.getElementById('page-pomodoro').classList.add('active');
+  switchTimerMode('pomo');
+  pomoPopulateSubjects(subject);
+  var sel=document.getElementById('pomo-subject-select');
+  if(![...sel.options].some(o=>o.value===subject)){
+    var opt=document.createElement('option'); opt.value=subject; opt.textContent=subject;
+    sel.insertBefore(opt, sel.lastChild);
+  }
+  sel.value=subject; pomo.subject=subject; simpleTimer.subject=subject;
+  document.getElementById('pomo-current-subject').textContent = 'در حال تمرکز روی: '+subject;
+  if(!pomo.running){ pomoReset(true); pomoToggleStart(); }
+}
+function pomoUpdateDisplay(){
+  var m=Math.floor(pomo.remaining/60), s=pomo.remaining%60;
+  document.getElementById('pomo-time').textContent = faDigits(String(m).padStart(2,'0'))+':'+faDigits(String(s).padStart(2,'0'));
+  var label = pomo.phase==='work' ? 'زمان تمرکز' : (pomo.phase==='short' ? 'استراحت کوتاه' : 'استراحت بلند');
+  document.getElementById('pomo-mode-label').textContent = label + (pomo.running? '' : ' — متوقف');
+  var ring = document.getElementById('pomo-ring');
+  var r=100, circumference=2*Math.PI*r;
+  ring.style.strokeDasharray = circumference;
+  var frac = pomo.total>0 ? (pomo.remaining/pomo.total) : 1;
+  ring.style.strokeDashoffset = circumference * (1-frac);
+  ring.style.stroke = pomo.phase==='work' ? 'var(--gold)' : 'var(--teal)';
+  document.getElementById('pomo-start-btn').textContent = pomo.running ? 'توقف موقت' : 'شروع';
+  var d = pomoDurations();
+  document.getElementById('pomo-cycle-num').textContent = faDigits(pomo.cycle);
+  document.getElementById('pomo-cycle-total').textContent = faDigits(d.cyclesBeforeLong);
+  var dots = '';
+  for(var i=1;i<=d.cyclesBeforeLong;i++){ dots += '<div class="pomo-dot'+(i<pomo.cycle?' done':'')+'"></div>'; }
+  document.getElementById('pomo-dots').innerHTML = dots;
+}
+function pomoToggleStart(){
+  if(pomo.running){ pomoPause(); return; }
+  if(pomo.remaining<=0){ pomoSetPhase(pomo.phase, true); }
+  pomo.running=true;
+  pomo.timerId = setInterval(pomoTick, 1000);
+  pomoUpdateDisplay();
+}
+function pomoPause(){ pomo.running=false; clearInterval(pomo.timerId); pomoUpdateDisplay(); }
+function pomoTick(){
+  pomo.remaining--;
+  if(pomo.remaining<=0){
+    clearInterval(pomo.timerId);
+    pomoPlayChime();
+    if(pomo.phase==='work'){
+      pomoLogSession();
+      var d=pomoDurations();
+      if(pomo.cycle >= d.cyclesBeforeLong){ pomo.cycle=1; pomoSetPhase('long', true); }
+      else { pomo.cycle++; pomoSetPhase('short', true); }
+    } else {
+      pomoSetPhase('work', true);
+    }
+    pomo.running=true;
+    pomo.timerId=setInterval(pomoTick,1000);
+  }
+  pomoUpdateDisplay();
+}
+function pomoSetPhase(phase, resetTime){
+  pomo.phase=phase;
+  var d=pomoDurations();
+  var secs = phase==='work'? d.work : phase==='short'? d.short : d.long;
+  if(resetTime){ pomo.remaining=secs; pomo.total=secs; }
+}
+function pomoSkip(){
+  clearInterval(pomo.timerId);
+  if(pomo.phase==='work'){
+    var d=pomoDurations();
+    if(pomo.cycle >= d.cyclesBeforeLong){ pomo.cycle=1; pomoSetPhase('long', true); }
+    else { pomo.cycle++; pomoSetPhase('short', true); }
+  } else {
+    pomoSetPhase('work', true);
+  }
+  pomo.running=false;
+  pomoUpdateDisplay();
+}
+function pomoReset(silent){
+  clearInterval(pomo.timerId);
+  pomo.running=false; pomo.cycle=1;
+  pomoSetPhase('work', true);
+  pomoUpdateDisplay();
+}
+function pomoLogSession(){
+  var t=todayJalali();
+  db.pomodoro.log.push({ id:uid(), subject: pomo.subject||'بدون درس', jy:t.jy, jm:t.jm, jd:t.jd, minutes: db.pomodoro.work });
+  saveDB();
+  pomoRenderStats();
+}
+
+/* ---- Simple timer ---- */
+function simpleSetMinutes(){
+  var input = document.getElementById('simple-minutes-input');
+  var mins = input ? (Number(input.value)||30) : 30;
+  simpleTimer.total = mins*60;
+  if(!simpleTimer.running) simpleTimer.remaining = mins*60;
+}
+function simpleUpdateDisplay(){
+  var m=Math.floor(simpleTimer.remaining/60), s=simpleTimer.remaining%60;
+  document.getElementById('pomo-time').textContent = faDigits(String(m).padStart(2,'0'))+':'+faDigits(String(s).padStart(2,'0'));
+  document.getElementById('pomo-mode-label').textContent = 'تایمر ساده' + (simpleTimer.running? '' : ' — متوقف');
+  var ring = document.getElementById('pomo-ring');
+  var r=100, circumference=2*Math.PI*r;
+  ring.style.strokeDasharray = circumference;
+  var frac = simpleTimer.total>0 ? (simpleTimer.remaining/simpleTimer.total) : 1;
+  ring.style.strokeDashoffset = circumference * (1-frac);
+  ring.style.stroke = 'var(--gold)';
+  document.getElementById('pomo-start-btn').textContent = simpleTimer.running ? 'توقف موقت' : 'شروع';
+}
+function simpleToggleStart(){
+  if(simpleTimer.running){ simplePause(); return; }
+  if(simpleTimer.remaining<=0){ simpleSetMinutes(); }
+  simpleTimer.running=true;
+  simpleTimer.timerId = setInterval(simpleTick, 1000);
+  simpleUpdateDisplay();
+}
+function simplePause(){ simpleTimer.running=false; clearInterval(simpleTimer.timerId); simpleUpdateDisplay(); }
+function simpleTick(){
+  simpleTimer.remaining--;
+  if(simpleTimer.remaining<=0){
+    clearInterval(simpleTimer.timerId);
+    simpleTimer.running=false;
+    pomoPlayChime();
+    simpleLogSession();
+    simpleTimer.remaining=0;
+  }
+  simpleUpdateDisplay();
+}
+function simpleReset(){
+  clearInterval(simpleTimer.timerId);
+  simpleTimer.running=false;
+  simpleSetMinutes();
+  simpleUpdateDisplay();
+}
+function simpleLogSession(){
+  var t=todayJalali();
+  var mins = Math.round(simpleTimer.total/60);
+  db.pomodoro.log.push({ id:uid(), subject: simpleTimer.subject||'بدون درس', jy:t.jy, jm:t.jm, jd:t.jd, minutes: mins });
+  saveDB();
+  pomoRenderStats();
+}
+
+function pomoPlayChime(){
+  try{
+    if(!pomo.audioCtx) pomo.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    var ctx=pomo.audioCtx;
+    [0,0.18,0.36].forEach(function(t,i){
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.frequency.value = i%2===0? 880:660;
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime+t);
+      g.gain.linearRampToValueAtTime(0.2, ctx.currentTime+t+0.02);
+      g.gain.linearRampToValueAtTime(0.0001, ctx.currentTime+t+0.16);
+      o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.18);
+    });
+  }catch(e){}
+}
+function pomoRenderStats(){
+  var t=todayJalali();
+  var todayLogs = db.pomodoro.log.filter(l=>l.jy===t.jy&&l.jm===t.jm&&l.jd===t.jd);
+  var totalMin = todayLogs.reduce((s,l)=>s+l.minutes,0);
+  var elToday=document.getElementById('pomo-today-stats');
+  if(elToday){
+    elToday.innerHTML = '<div class="list-item"><span>تعداد جلسه</span><span class="badge-num">'+faDigits(todayLogs.length)+'</span></div>'+
+      '<div class="list-item"><span>مجموع دقیقه تمرکز</span><span class="badge-num">'+faDigits(totalMin)+' دقیقه</span></div>';
+  }
+  var bySubj={};
+  db.pomodoro.log.forEach(l=>{ bySubj[l.subject]=(bySubj[l.subject]||0)+1; });
+  var elSubj=document.getElementById('pomo-subject-stats');
+  if(elSubj){
+    var keys=Object.keys(bySubj);
+    if(keys.length===0){ elSubj.innerHTML='<div class="empty-note">هنوز جلسه‌ای ثبت نشده.</div>'; }
+    else{
+      elSubj.innerHTML = keys.sort((a,b)=>bySubj[b]-bySubj[a]).map(k=>
+        '<div class="list-item"><span>'+k+'</span><span class="badge-num">'+faDigits(bySubj[k])+' جلسه</span></div>'
+      ).join('');
+    }
+  }
+}
+function openPomoSettingsModal(){
+  var s=db.pomodoro;
+  var html = '<h3>تنظیم زمان‌بندی پومودورو</h3>'+
+    '<div class="field"><label>مدت تمرکز (دقیقه)</label><input type="number" id="f-work" value="'+s.work+'"></div>'+
+    '<div class="field-row">'+
+      '<div class="field"><label>استراحت کوتاه (دقیقه)</label><input type="number" id="f-short" value="'+s.short+'"></div>'+
+      '<div class="field"><label>استراحت بلند (دقیقه)</label><input type="number" id="f-long" value="'+s.long+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>تعداد دور قبل از استراحت بلند</label><input type="number" id="f-cycles" value="'+s.cyclesBeforeLong+'"></div>'+
+    '<div class="modal-actions">'+
+      '<button class="btn" onclick="closeModal()">انصراف</button>'+
+      '<button class="btn primary" onclick="savePomoSettings()">ذخیره</button>'+
+    '</div>';
+  openModal(html);
+}
+function savePomoSettings(){
+  db.pomodoro.work=Number(val('f-work'))||25;
+  db.pomodoro.short=Number(val('f-short'))||5;
+  db.pomodoro.long=Number(val('f-long'))||15;
+  db.pomodoro.cyclesBeforeLong=Number(val('f-cycles'))||4;
+  saveDB(); closeModal();
+  if(timerMode==='pomo') pomoReset();
+}
+
+/* ============================================================
+   MASTER RENDER
+   ============================================================ */
+function renderAll(){
+  renderDashboard();
+  renderWeekly();
+  renderSchoolTable();
+  renderOnlineList();
+  renderExamsTable();
+  renderMocksList();
+  renderResourcesList();
+  renderSettings();
+  pomoPopulateSubjects();
+  pomoRenderStats();
+  if(timerMode==='pomo') pomoUpdateDisplay(); else simpleUpdateDisplay();
+}
+pomoSetPhase('work', true);
+renderAll();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('service-worker.js').catch(function(e){ console.log('SW failed', e); });
+  });
+}
+
+// Install prompt handling (Android/Chrome)
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  var btn = document.getElementById('install-btn');
+  if (btn) btn.style.display = 'inline-block';
+});
+function triggerInstall() {
+  if (!deferredInstallPrompt) { alert('برای نصب، از منوی مرورگر گزینه «افزودن به صفحه اصلی» را بزن.'); return; }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(function () { deferredInstallPrompt = null; });
+}
+</script>
+</body>
+</html>
